@@ -1,11 +1,10 @@
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import { LoaderCircle, LockKeyhole, Mail } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
+// import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
@@ -19,10 +18,10 @@ interface LoginForm {
 
 interface LoginProps {
     status?: string;
-    canResetPassword: boolean;
+    // canResetPassword: boolean;
 }
 
-export default function Login({ status, canResetPassword }: LoginProps) {
+export default function Login({ status, }: LoginProps) {
     const { data, setData, post, processing, errors, reset } = useForm<LoginForm>({
         email: '',
         password: '',
@@ -31,6 +30,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+
         post(route('login'), {
             onFinish: () => reset('password'),
         });
@@ -38,71 +38,82 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
     return (
         <div className="relative isolate min-h-screen w-full">
-            <AuthLayout title="Log in to your account" description="Enter your email and password below to log in">
-                <Head title="Log in" />
+            <Head title="Log in" />
 
-                <form className="flex flex-col gap-6" onSubmit={submit}>
-                    <div className="grid gap-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                required
-                                autoFocus
-                                tabIndex={1}
-                                autoComplete="email"
-                                value={data.email}
-                                onChange={(e) => setData('email', e.target.value)}
-                                placeholder="email@example.com"
-                            />
+            <AuthLayout title="Welcome Back" description="Login to your TFVC Grading System account">
+                <form onSubmit={submit} className="flex flex-col gap-6">
+                    <div className="space-y-5">
+                        {/* Email */}
+                        <div className="space-y-2">
+                            <Label htmlFor="email" className="text-sm font-semibold text-slate-700">
+                                Email Address
+                            </Label>
+
+                            <div className="relative">
+                                <Mail className="absolute top-1/2 left-3.5 h-5 w-5 -translate-y-1/2 text-slate-400" />
+
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    required
+                                    autoFocus
+                                    autoComplete="email"
+                                    value={data.email}
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    placeholder="Enter your email address"
+                                    className="h-12 rounded-xl border-slate-200 bg-white/80 pl-11 text-sm shadow-sm transition focus-visible:border-blue-700 focus-visible:ring-blue-700"
+                                />
+                            </div>
+
                             <InputError message={errors.email} />
                         </div>
 
-                        <div className="grid gap-2">
-                            <div className="flex items-center">
-                                <Label htmlFor="password">Password</Label>
+                        {/* Password */}
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
+                                    Password
+                                </Label>
 
-                                {canResetPassword && (
-                                    <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
+                                {/* {canResetPassword && (
+                                    <TextLink href={route('password.request')} className="text-xs font-semibold text-blue-800 hover:text-blue-600">
                                         Forgot password?
                                     </TextLink>
-                                )}
+                                )} */}
                             </div>
 
-                            <Input
-                                id="password"
-                                type="password"
-                                required
-                                tabIndex={2}
-                                autoComplete="current-password"
-                                value={data.password}
-                                onChange={(e) => setData('password', e.target.value)}
-                                placeholder="Password"
-                            />
+                            <div className="relative">
+                                <LockKeyhole className="absolute top-1/2 left-3.5 h-5 w-5 -translate-y-1/2 text-slate-400" />
+
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    required
+                                    autoComplete="current-password"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    placeholder="Enter your password"
+                                    className="h-12 rounded-xl border-slate-200 bg-white/80 pl-11 text-sm shadow-sm transition focus-visible:border-blue-700 focus-visible:ring-blue-700"
+                                />
+                            </div>
+
                             <InputError message={errors.password} />
                         </div>
 
-                        <div className="flex items-center space-x-3">
-                            <Checkbox id="remember" name="remember" tabIndex={3} />
-                            <Label htmlFor="remember">Remember me</Label>
-                        </div>
-
-                        <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
-                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                            Log in
+                        {/* Login Button */}
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="h-12 w-full rounded-xl bg-blue-950 text-sm font-semibold text-white shadow-md transition hover:bg-blue-900 disabled:opacity-60"
+                        >
+                            {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
+                            Login
                         </Button>
                     </div>
 
-                    <div className="text-muted-foreground text-center text-sm">
-                        Don't have an account?{' '}
-                        <TextLink href={route('register')} tabIndex={5}>
-                            Sign up
-                        </TextLink>
-                    </div>
+                    {/* Status */}
+                    {status && <div className="rounded-lg bg-blue-50 p-3 text-center text-sm font-medium text-blue-800">{status}</div>}
                 </form>
-
-                {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
             </AuthLayout>
         </div>
     );
